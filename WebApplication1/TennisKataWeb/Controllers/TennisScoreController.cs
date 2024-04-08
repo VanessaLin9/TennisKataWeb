@@ -27,19 +27,34 @@ public class TennisScoreController(TennisService tennisService) : ControllerBase
     [Route("GiveFirstPlayerScore")]
     public string GiveFirstPlayerScore(int score)
     {
+        if (IsScoreValidate(score))
+        {
+            return InvalidScore();
+        }
         GivenFirstPlayerScore(score);
         return Score();
     }
 
-    
-
-
     [HttpPost]
     [Route("GiveSecondPlayerScore")]
-    public string GiveSecondPlayerScore()
+    public string GiveSecondPlayerScore(int score)
     {
-        tennisService.SecondPlayerScore();
+        if (IsScoreValidate(score))
+        {
+            return InvalidScore();
+        }
+        GivenSecondPlayerScore(score);
         return Score();
+    }
+
+    private static bool IsScoreValidate(int score)
+    {
+        return score<=0 || score > 7;
+    }
+
+    private static string InvalidScore()
+    {
+        return "Invalid score";
     }
 
     private string Score()
@@ -47,9 +62,17 @@ public class TennisScoreController(TennisService tennisService) : ControllerBase
         return tennisService.GetScore();
     }
     
-    private void GivenFirstPlayerScore(int score)
+    private void GivenSecondPlayerScore(int times)
     {
-        for (int i = 0; i < score; i++)
+        for (int i = 0; i < times; i++)
+        {
+            tennisService.SecondPlayerScore();
+        }
+    }
+    
+    private void GivenFirstPlayerScore(int times)
+    {
+        for (int i = 0; i < times; i++)
         {
             tennisService.FirstPlayerScore();    
         }
